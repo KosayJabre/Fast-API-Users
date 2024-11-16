@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.database import get_session
 from src.tables import User
-from src.users import get_current_user
+from src.utils.users import get_current_user
 from src.utils.passwords import hash_password, validate_password_strength, verify_password
 
 
@@ -24,7 +24,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/api/change-password", tags=["user"])
-@limiter.limit("3/minute")
+@limiter.limit("30/minute")
 def change_password(
     request: Request, change_password_request: ChangePasswordRequest, db: Session = Depends(get_session), current_user: User = Depends(get_current_user)
 ):

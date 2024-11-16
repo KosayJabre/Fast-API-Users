@@ -5,7 +5,7 @@ from slowapi.util import get_remote_address
 from sqlalchemy.orm import Session
 
 from src.database import get_session
-from src.users import get_user_by_email
+from src.utils.users import get_user_by_email
 from src.utils.auth import decode_token
 
 
@@ -14,7 +14,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 
 @router.get("/api/verify-email/{token}", tags=["register"])
-@limiter.limit("3/minute")
+@limiter.limit("30/minute")
 def confirm_email(request: Request, token: str, db: Session = Depends(get_session)):
     try:
         email_address = decode_token(token)["email"]

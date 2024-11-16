@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from src.database import get_session
 
-from src.users import get_user_by_email, get_user_by_username
+from src.utils.users import get_user_by_email, get_user_by_username
 from src.utils.auth import create_access_token, create_refresh_token
 from src.utils.passwords import verify_password
 
@@ -24,7 +24,7 @@ class LoginResponse(BaseModel):
 
 
 @router.post("/api/login", response_model=LoginResponse)
-@limiter.limit("3/minute")
+@limiter.limit("30/minute")
 def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_session)):
     email_or_username = form_data.username
     user_from_email = get_user_by_email(db, email_or_username)

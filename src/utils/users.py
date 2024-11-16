@@ -3,10 +3,11 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
-from src.database import get_db
-from src.utils.email_address import normalize_email_address
-from .tables import User
+from src.database import get_session
+from src.utils.email_addresses import normalize_email_address
+from src.tables import User
 from src.utils.auth import decode_token
+from src.utils.usernames import normalize_username
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login/")
@@ -14,7 +15,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login/")
 
 async def try_get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
 ) -> User | Exception:
     try:
         return await get_current_user(token, db)
@@ -24,7 +25,7 @@ async def try_get_current_user(
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -58,5 +59,5 @@ def get_user_by_email(db: Session, email: int) -> User:
 
 
 def get_user_by_username(db: Session, username: int) -> User:
-    normalized_username = normalized_username(username)
+    normalized_username = normalize_username(username)
     return db.query(User).filter(User.normalized_username == normalized_username).first()

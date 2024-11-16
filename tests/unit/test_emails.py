@@ -1,4 +1,4 @@
-from src.utils.email_address import is_valid_email_address, normalize_email_address
+from src.utils.email_addresses import is_valid_email_address, normalize_email_address
 
 
 def test_is_valid_email_address():

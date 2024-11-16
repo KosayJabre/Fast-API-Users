@@ -1,7 +1,7 @@
 from postmarker.core import PostmarkClient
 
 from src.utils.auth import create_email_verification_token
-from src.utils.email_address import is_valid_email_address
+from src.utils.email_addresses import is_valid_email_address
 
 
 SERVER_TOKEN = "server-token-here"  

@@ -4,7 +4,7 @@ from better_profanity import profanity
 from profanity_check import predict
 from pydantic import BaseModel
 
-from src.utils.email_address import is_valid_email_address
+from src.utils.email_addresses import is_valid_email_address
 
 
 MINIMUM_USERNAME_LENGTH = 3

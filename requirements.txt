@@ -16,3 +16,4 @@ alt-profanity-check
 python-multipart
 postmarker
 aiomysql
+sqlmodel

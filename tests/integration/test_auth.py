@@ -1,4 +1,4 @@
-from src.tests.utils import (
+from tests.utils import (
     PRIMARY_USER_DETAILS,
     successful_registration,
     db,
@@ -13,7 +13,7 @@ from unittest.mock import patch
 
 
 def test_registration(client):
-    with patch("src.routes.register.send_registration_email") as mock_send_email:  # Mock where it's used, not where it's defined
+    with patch("src.routers.register.send_registration_email") as mock_send_email:  # Mock where it's used, not where it's defined
         # register a new user
         response = try_register_user(client, PRIMARY_USER_DETAILS)
         assert response.status_code == 200
@@ -28,7 +28,7 @@ def test_registration(client):
 
 
 def test_login(client):
-    with patch("src.routes.register.send_registration_email") as mock_send_email:  # Mock where it's used, not where it's defined
+    with patch("src.routers.register.send_registration_email") as mock_send_email:  # Mock where it's used, not where it's defined
         # create a new user
         response = try_register_user(client, PRIMARY_USER_DETAILS)
 
@@ -48,7 +48,7 @@ def test_login(client):
 
 
 def test_refresh_token(client, db):
-    with patch("src.routes.register.send_registration_email") as mock_send_email:  # Mock where it's used, not where it's defined
+    with patch("src.routers.register.send_registration_email") as mock_send_email:  # Mock where it's used, not where it's defined
         # Register a new user
         response = try_register_user(client, PRIMARY_USER_DETAILS)
         assert response.status_code == 200

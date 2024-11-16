@@ -1,4 +1,4 @@
-from src.utils.password import validate_password_strength
+from src.utils.passwords import validate_password_strength
 
 
 def test_short_passwords():

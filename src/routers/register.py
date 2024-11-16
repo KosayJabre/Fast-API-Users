@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from src.database import get_session
 from src.tables import User
-from src.users import get_user_by_email, get_user_by_username
-from src.utils.email_address import is_valid_email_address, normalize_email_address
+from src.utils.users import get_user_by_email, get_user_by_username
+from src.utils.email_addresses import is_valid_email_address, normalize_email_address
 from src.utils.passwords import hash_password, validate_password_strength
 from src.utils.send_email import send_registration_email
 from src.utils.usernames import normalize_username, validate_username
@@ -30,7 +30,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/api/register", response_model=RegisterUserResponse, tags=["register"])
-@limiter.limit("3/minute")
+@limiter.limit("30/minute")
 def register(request: Request, user_in: RegisterUserRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_session)):
     # Check if email is valid
     normalized_email = normalize_email_address(user_in.email)

@@ -8,8 +8,8 @@ from sqlalchemy.orm import sessionmaker
 from unittest.mock import patch
 
 from src.main import app
-from src.tables.base import BaseModel
-from src.database import get_db
+from src.database import get_session
+from sqlmodel import SQLModel
 
 
 PRIMARY_USER_DETAILS = {"username": "TestUser", "email": "test@test.com", "password": "SomeReallyStrongPassword123!"}
@@ -30,13 +30,13 @@ def db():
     TestingSessionLocal = sessionmaker(bind=engine)
 
     session = TestingSessionLocal()
-    BaseModel.metadata.create_all(bind=session.get_bind())
+    SQLModel.metadata.create_all(engine)
 
     yield session  # this is where the testing happens
 
     # Cleanup
     session.close()
-    BaseModel.metadata.drop_all(bind=session.get_bind())
+    SQLModel.metadata.drop_all(bind=session.get_bind())
     engine.dispose()
 
     # drop the database after the test has completed
@@ -48,10 +48,10 @@ def client(db):
     # Here, db is an instance of Session that points to a new SQLite DB for each test.
     # We override the get_db dependency to return this session for each request.
 
-    def override_get_db():
+    def override_get_session():
         yield db
 
-    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_session] = override_get_session
 
     client = TestClient(app)
     yield client
@@ -61,7 +61,7 @@ def client(db):
 @pytest.fixture(scope="function")
 def access_token(client):
     # Mock where it's used, not where it's defined
-    with patch("src.routes.register.send_registration_email") as mock_send_email:
+    with patch("src.routers.register.send_registration_email") as mock_send_email:
         # Register a new user
         response = client.post(
             "/api/register",
@@ -88,7 +88,7 @@ def access_token(client):
 @pytest.fixture(scope="function")
 def access_token_secondary(client):
     # Mock where it's used, not where it's defined
-    with patch("api.routes.register.send_registration_email") as mock_send_email:
+    with patch("src.utils.send_email.send_registration_email") as mock_send_email:
         # Register a new user
         response = client.post(
             "/api/register",

@@ -1,4 +1,4 @@
-from src.utils.username import validate_username, normalize_username
+from src.utils.usernames import validate_username, normalize_username
 
 
 def test_username_normalization():

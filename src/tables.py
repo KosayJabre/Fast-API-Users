@@ -1,11 +1,12 @@
+from datetime import datetime
+
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, event
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql import func
-from sqlmodel import SQLModel
+from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-from src.utils.email_address import is_valid_email_address, normalize_email_address
+from src.utils.email_addresses import is_valid_email_address, normalize_email_address
 from .utils.usernames import normalize_username
-
 
 from sqlalchemy.orm import declarative_base
 
@@ -13,25 +14,19 @@ from sqlalchemy.orm import declarative_base
 class User(SQLModel, table=True):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(255), unique=True, index=True)
-    normalized_email = Column(String(255), index=True)
-    username = Column(String(32), unique=True, index=True)
-    normalized_username = Column(String(32), index=True)
-    hashed_password = Column(String(255))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    is_email_verified = Column(Boolean, default=False)
-
-    # Answers made by the user
-    answers = relationship("AnswersTable", back_populates="user")
+    id: int = Field(primary_key=True, index=True)
+    email: str = Field(unique=True)
+    normalized_email: str = Field(unique=True, index=True)
+    username: str = Field(unique=True)
+    normalized_username: str = Field(unique=True, index=True)
+    hashed_password: str = Field()
+    created_at: datetime = Field(default=func.now())
+    is_email_verified: bool = Field(default=False)
 
     @validates("email")
     def validate_email(self, key, email):
         assert is_valid_email_address(email), "Invalid email address"
         return email
-
-    def to_user_data(self) -> UserData:
-        return UserData(id=str(self.id), email=self.email, username=self.username, is_email_verified=self.is_email_verified)
 
 
 @event.listens_for(User.email, "set", retval=True)

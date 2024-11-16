@@ -7,7 +7,7 @@ from slowapi.util import get_remote_address
 from sqlalchemy.orm import Session
 
 from src.database import get_session
-from src.users import get_user_by_id
+from src.utils.users import get_user_by_id
 from src.utils.auth import create_access_token, create_refresh_token, decode_token
 
 
@@ -27,7 +27,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/api/refresh-token", response_model=RefreshTokenResponse, tags=["auth"])
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 def refresh_token(request: Request, refresh_request: RefreshTokenRequest, db: Session = Depends(get_session)):
     try:
         payload = decode_token(refresh_request.refresh_token)
