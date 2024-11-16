@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  webvoter-api:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    environment:
+      - WEBVOTER_DATABASE_URL=mysql+pymysql://root:password@database/mydatabase # Replace for actual production
+      - WEBVOTER_ENVIRONMENT=production
+
+  database:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password # Replace for actual production
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password # Replace for actual production
+      MYSQL_DATABASE: mydatabase # Replace for actual production
