@@ -5,10 +5,10 @@ from profanity_check import predict
 from pydantic import BaseModel
 
 from src.utils.email_addresses import is_valid_email_address
+from src.config import config
 
-
-MINIMUM_USERNAME_LENGTH = 3
-MAXIMUM_USERNAME_LENGTH = 24
+MINIMUM_USERNAME_LENGTH = config.minimum_username_length
+MAXIMUM_USERNAME_LENGTH = config.maximum_username_length
 # Only allow letters, numbers, spaces, underscores, hyphens and dots
 ALLOWED_CHARACTERS_REGEX = re.compile(r"^[a-zA-Z0-9_\.\- ]+$")
 RESERVED_NAMES = ["admin", "administrator", "staff", "support", "root"]
