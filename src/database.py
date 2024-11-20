@@ -4,6 +4,8 @@ from sqlmodel import Session
 
 DB_NAME = "database.db"
 SQLITE_URL = f"sqlite:///{DB_NAME}"
+
+
 engine = create_engine(SQLITE_URL)
 
 

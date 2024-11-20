@@ -7,17 +7,12 @@ from pydantic import BaseModel
 from src.utils.email_addresses import is_valid_email_address
 from src.config import config
 
+
 MINIMUM_USERNAME_LENGTH = config.minimum_username_length
 MAXIMUM_USERNAME_LENGTH = config.maximum_username_length
-# Only allow letters, numbers, spaces, underscores, hyphens and dots
-ALLOWED_CHARACTERS_REGEX = re.compile(r"^[a-zA-Z0-9_\.\- ]+$")
+ALLOWED_CHARACTERS_REGEX = re.compile(r"^[a-zA-Z0-9_\.\- ]+$")  # Only allow letters, numbers, spaces, underscores, hyphens and dots
 RESERVED_NAMES = ["admin", "administrator", "staff", "support", "root"]
 USERNAME_MINIMUM_PROFANITY_THRESHOLD = 0.66
-
-
-class UsernameValidationResult(BaseModel):
-    is_valid: bool
-    reason: str
 
 
 def normalize_username(username: str) -> str:
@@ -28,6 +23,11 @@ def normalize_username(username: str) -> str:
     no_hyphens = no_underscores.replace("-", "")
     no_dots = no_hyphens.replace(".", "")
     return no_dots
+
+
+class UsernameValidationResult(BaseModel):
+    is_valid: bool
+    reason: str
 
 
 def validate_username(username: str) -> UsernameValidationResult:

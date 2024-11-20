@@ -19,46 +19,58 @@ class RefreshTokenResponse(BaseModel):
     message: str
     access_token: str
     refresh_token: str
-    token_type: str
 
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
 
-@router.post("/api/refresh-token", response_model=RefreshTokenResponse, tags=["auth"])
+@router.post("/api/refresh-token", response_model=RefreshTokenResponse)
 @limiter.limit("30/minute")
 def refresh_token(request: Request, refresh_request: RefreshTokenRequest, db: Session = Depends(get_session)):
     try:
         payload = decode_token(refresh_request.refresh_token)
-        id = payload.get("sub")
-        if payload.get("type") != "refresh":
+        user_id = payload.get("sub")
+        token_version = payload.get("version")
+        purpose = payload.get("purpose")
+        if purpose != "refresh":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
-                headers={"WWW-Authenticate": "Bearer"},
+                detail="Invalid token type",
             )
     except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token expired",
-            headers={"WWW-Authenticate": "Bearer"},
         )
     except jwt.PyJWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
-            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to refresh token",
         )
 
-    user = get_user_by_id(db, id)
+    user = get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User not found",
-            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Check if token_version matches
+    if token_version != user.token_version:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been revoked",
         )
 
     return RefreshTokenResponse(
-        message="Login successful", access_token=create_access_token(user.id), refresh_token=create_refresh_token(user.id), token_type="bearer"
+        message="Token refresh successful",
+        access_token=create_access_token(user.id, user.token_version),
+        refresh_token=create_refresh_token(user.id, user.token_version),
     )

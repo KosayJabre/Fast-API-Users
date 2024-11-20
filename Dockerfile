@@ -8,8 +8,8 @@ RUN pip install -r /requirements.txt
 # Copy the current directory contents into the container at /api
 ADD . /
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+# Make port 8000 available to the world outside this container
+EXPOSE 8000
 
 # Run app.py when the container launches
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
