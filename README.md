@@ -29,9 +29,9 @@ http://localhost:8000/docs
 
 ## Endpoints
 
-`/register`: Takes an email address, username, and password and creates user.
-`/login`: Takes a username/email + password, and returns an access token + refresh token.
-`/refresh_token`: Takes a refresh token and return a new access token + refresh token.
-`/change_password`: Change a user's password. Invalidates all previous tokens. 
+- `/register`: Takes an email address, username, and password and creates user.
+- `/login`: Takes a username/email + password, and returns an access token + refresh token.
+- `/refresh_token`: Takes a refresh token and return a new access token + refresh token.
+- `/change_password`: Change a user's password. Invalidates all previous tokens. 
 
 
