@@ -1,8 +1,9 @@
 # Fast API Users
-A simple educational example for doing user registration, authentication, and login using FastAPI + SQLModel. 
+A simple example of doing user registration, authentication, and login using FastAPI + SQLModel. 
 
 Handles basic things like enforcing password strength, username profanity, and email address validation.
 
+Note: this is just for educational purposes. Do not use in production. 
 ## Setup
 
 To run the tests:
