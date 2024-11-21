@@ -26,7 +26,7 @@ def verify_password(plaintext_password: str, hashed_password: str) -> bool:
 
 
 def password_strength(password: str) -> float:
-    """Return a number from 0-1 representing the strength of the password, where 1 is very strong and 0 is very weak."""
+    # Return a number from 0-1 representing the strength of the password, where 1 is very strong and 0 is very weak.
     stats = PasswordStats(password)
     weakness_adjustment = stats.weakness_factor / 3  # How much to penalize for weak sequences and patterns (a third as much as normal)
     strength_adjustment = stats.strength(weak_bits=20)  # How strong the password is from an entropy point of view
